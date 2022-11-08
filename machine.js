@@ -10,13 +10,13 @@ return Object.assign((sel, node = document) => node.querySelector(sel), {
   all (sel, node = document) { return v(node.querySelectorAll(sel)) },
 
 //   $.Machine creates state machines for the page
-  Machine: ((es, state) => class { constructor (s) { state = Object.seal(s);
+  Machine: class { constructor (s) { let state = Object.seal(s); wm.set(this, { es: {}, state: Object.seal(s) });
       for (let k in state) Object.defineProperty(this, k, { get: () => state[k], set: v => state[k] = v }) }
-    state () { return state }
-    on (t, fn) { (es[t] ??= new Map()).set(fn.name, fn); return this }
-    stop (t, fname = t) { es[t]?.delete(fname) && (es[t].size || delete es[t]); return this }
-    emit (t, ...args) { return (a => (es[t]?.forEach(fn => a[fn.name] = fn.apply(this, args)), a))({}) }
-    emitAsync (t, ...args) { return (p => (es[t]?.forEach(fn => p = p.then(a => r(fn.apply(this, args)).then(v => ({...a, [fn.name]: v})))), p))(r({})) } })({}),
+    state () { return wm.get(this).state }
+    on (t, fn) { (wm.get(this).es[t] ??= new Map()).set(fn.name, fn); return this }
+    stop (t, fname = t) { wm.get(this).es[t]?.delete(fname) && (es[t].size || delete es[t]); return this }
+    emit (t, ...args) { return (a => (wm.get(this).es[t]?.forEach(fn => a[fn.name] = fn.apply(this, args)), a))({}) }
+    emitAsync (t, ...args) { return (p => (wm.get(this).es[t]?.forEach(fn => p = p.then(a => r(fn.apply(this, args)).then(v => ({...a, [fn.name]: v})))), p))(r({})) } },
 
 //   $.pipe manages async event chronology
   pipe: (ps => (p, ...ands) => ps[p] = (ps[p] ?? r()).then(() => Promise.all(ands.map(ors =>
