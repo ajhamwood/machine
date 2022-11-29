@@ -6,7 +6,7 @@ App state, events, and async chronology management tools for client-side JS in a
 
 HTML:
 
-```
+```html
 <main></main>
 <template id='my-title'><h1></h1></template>
 <script src='https://cdn.jsdelivr.net/gh/ajhamwood/machine@master/machine.min.js'></script>
@@ -15,7 +15,7 @@ HTML:
 
 JS:
 
-```
+```js
 // Page state
 var app = new $.Machine({
   title: '~Hello world~'
@@ -51,7 +51,7 @@ $.targets({
 
 Improved `querySelector`/`querySelectorAll`. Query the DOM tree and return the first matching `Element` or null, or with `$.all` an `Array` of the resulting `Element`s. Optionally include a root node to query within (default is `document`).
 
-```
+```js
 // Returns the 5th element with class 'cell' inside a 'main' element.
 let cell = $('main .cell')
 
@@ -65,7 +65,7 @@ Improved `importNode`. Insert the contents of the template selected by id into e
 
 HTML:
 
-```
+```html
 <main></main>
 <template id='cell'>
   <div class='cell'></div>
@@ -78,7 +78,7 @@ HTML:
 
 JS:
 
-```
+```js
 // Places 5 copies of the contents of the cell template into main
 for (let i = 0; i < 5; i++) $.load('cell', 'main')
 
@@ -96,7 +96,7 @@ Succinct web components. Provide the contents to the web component in a template
 
 HTML:
 
-```
+```html
 // Adapted from https://github.com/vanillawc/wc-marquee
 <wc-marquee>Hello</wc-marquee>
 <template id="wc-marquee">
@@ -116,7 +116,7 @@ HTML:
 
 JS:
 
-```
+```js
 // Creates a marquee element
 $.loadWc("wc-marquee", {
   constructor () { const el = $(".marquee", this.shadowRoot)[0] },
@@ -128,7 +128,7 @@ $.loadWc("wc-marquee", {
 
 Improved `addEventListener`/`removeEventListener`, for use with `Element`s. Provide a function to add to a given element's event listeners, or provide the name of a function to remove from its event listeners. Multiple listeners can be mass assigned/deleted by separating their names with a space in the key. The targeted element is available in the listener as the local `this`. Optionally include a root node to query within (default is `document`).
 
-```
+```js
 // Inverts the checked state of each radio input when its label is sent a click or a touchstart event
 $.queries({
   label: {
@@ -148,7 +148,7 @@ $.queries({ label: { touchstart: 'click touchstart'} })
 
 Improved `EventEmitter`. Construct a Machine object which has `on`, `stop`, `emit`, `emitAsync`, and `state` methods, with the argument object as state. The state object is sealed, so properties can be mutated but not added or deleted. The state is also available on the Machine instance.
 
-```
+```js
 // Creates a new Machine with a single key 'selected'.
 var app = new $.Machine({ selected: null })
 // app.selected === null
@@ -158,7 +158,7 @@ var app = new $.Machine({ selected: null })
 
 Add an event listener to the Machine. Both state and Machine methods are available in the listener as the local `this`.
 
-```
+```js
 // Adds event listeners to app: one which set the key's value to its argument, one which clears the key's
 // value to null, and one which waits some milliseconds.
 app
@@ -171,7 +171,7 @@ app
 
 Remove an event listener from the Machine. Optionally provide the name of the function to remove one of multiple listeners on an event (defaults to the name of the event).
 
-```
+```js
 app.stop('clear', 'c')
 ```
 
@@ -179,7 +179,7 @@ app.stop('clear', 'c')
 
 Emit an event. If multiple listeners are attached, they are called sequentially in order of attachment. A hash of each listener's returned value indexed by name of function is returned.
 
-```
+```js
 let sel = app.emit('select', 3).select
 ```
 
@@ -187,7 +187,7 @@ let sel = app.emit('select', 3).select
 
 Emit an asynchronous event. If multiple listeners are attached, they are called sequentially in order of attachment. The resolved result is the same as in the synchronous version.
 
-```
+```js
 // Waits 1s and prints the 'selected' value to console.
 app.emitAsync('wait', 1000).then(({ wait }) => console.log(wait.selected))
 ```
@@ -196,7 +196,7 @@ app.emitAsync('wait', 1000).then(({ wait }) => console.log(wait.selected))
 
 Return the state object for the Machine.
 
-```
+```js
 let sel = app.state().selected
 ```
 
@@ -204,7 +204,7 @@ let sel = app.state().selected
 
 Improved `addEventListener`/`removeEventListener`, for use with `EventTarget` and `$.Machine` objects. Provide a function to add to a given object's event listeners, provide the name of a function to remove from its event listeners, or provide an object to hierarchically add/remove event listeners on the given property of the current object. Multiple listeners can be mass assigned/deleted by separating their names with a space in the key. Multiple sub-objects can be targeted by giving a regex in the key. The targeted object is available in the listener as the local `this`. Optionally include a base object to locate properties/listeners within (default is `window`).
 
-```
+```js
 // Creates two Machines named app1 and app2, adds an event listener to the window resize event, and a
 // resize event to both Machines.
 //
@@ -225,7 +225,7 @@ $.targets({
 
 Improved `Promise.all`/`Promise.race`. Provide functions to run concurrently before passing on the last one completed; provide `Array`s of functions to run concurrently before passing on the first one completed.
 
-```
+```js
 // Waits 1s before sending the 'nextSelected' event to app, once.
 $.pipe('app-pipe', [() => app.emitAsync('wait', 2000), () => app.emitAsync('wait', 1000)]);
 $.pipe('app-pipe', () => app.emit('nextSelected'))
