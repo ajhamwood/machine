@@ -1,5 +1,5 @@
 // machine.js by https://github.com/ajhamwood
-var $ = (() => { const wm = new WeakMap(), v = Array.from, r = Promise.resolve.bind(Promise),
+const $ = (() => { const wm = new WeakMap(), v = Array.from, r = Promise.resolve.bind(Promise),
   test = (obj, con) => obj.constructor === con || con.prototype.isPrototypeOf(obj),
   add = (k, t, p, fn, es = wm.get(k) ?? {}) => { remove(k, t, fn.name);
     k.addEventListener(t, (es[t] ??= {})[fn.name] = fn, ...([{"*": { passive: !p }, "#": { capture: !p }}[p]] ?? [])); wm.set(k, es) },
@@ -46,4 +46,5 @@ return Object.assign((sel, node = document) => sel ? node.querySelector(sel) : n
 //   $.loadWc adds web components
   loadWc (tag, { constructor: c, options: o, ...methods }, attrs = []) { class El extends HTMLElement { static get observedAttributes () { return attrs }
     constructor(...args) { super(); this.attachShadow(o ?? { mode: 'open' }).appendChild($('#' + tag).content.cloneNode(true)); c?.apply(this, args) } };
-    Object.assign(El.prototype, methods); customElements.define(tag, El) } }) })()
+    Object.assign(El.prototype, methods); customElements.define(tag, El) } }) })();
+export default $
